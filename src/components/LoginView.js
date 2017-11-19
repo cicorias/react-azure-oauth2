@@ -4,6 +4,7 @@ import { UserAgentApplication } from 'msal';
 
  // b2c ef36569d-2097-41ec-a3ef-9b066e8d5c29 -
  // aad 45abfc7e-4e11-44ea-8d9a-e0dab00c0e3d -
+ // 001b9e56-2530-4682-9adf-8bbcb077eb67 -- old fortis?
 
  //new app.dev
  // fortisdev b354bafa-c381-417e-b93b-fce6e40ee013 +
@@ -11,8 +12,8 @@ import { UserAgentApplication } from 'msal';
 
  //fortis-aad-only 001b9e56-2530-4682-9adf-8bbcb077eb67 (microsoft)
 var applicationConfig = {
-  clientID: process.env.REACT_APP_CLIENTID || '22b814e7-927d-4bf8-9a8c-55304e9a5acd',
-  authority1: 'https://login.microsoftonline.com/microsoft.onmicrosoft.com',
+  clientID: process.env.REACT_APP_CLIENTID,
+  authority: 'https://login.microsoftonline.com/csenyc.onmicrosoft.com',
   graphScopes: ['profile']
 
 }
@@ -81,10 +82,14 @@ export default class Login extends Component {
   }
 
   updateUI() {
-    var authButton = document.getElementById('login');
-    authButton.innerHTML = 'logout';
-    var label = document.getElementById('label');
-    label.innerText = "Hello " + this.userAgentApplication.getUser().name + "! Please send an email with Microsoft Graph";
+    console.log(this.userAgentApplication.getUser().name);
+    var user = this.userAgentApplication.getUser();
+
+    console.log(JSON.stringify(user));
+    // var authButton = document.getElementById('login');
+    // authButton.innerHTML = 'logout';
+    // var label = document.getElementById('label');
+    // label.innerText = "Hello " + this.userAgentApplication.getUser().name + "! Please send an email with Microsoft Graph";
 
     // Show the email address part
     //var sendEmailSpan = document.getElementById('sendEmail');
