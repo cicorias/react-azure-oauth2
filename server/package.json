@@ -11,10 +11,16 @@
     "author": "Auth0",
     "license": "MIT",
     "dependencies": {
-        "body-parser": "^1.15.2",
+        "body-parser": "^1.18.2",
+        "cookie-parser": "^1.4.3",
         "cors": "^2.8.1",
-        "express": "^4.14.0",
+        "dotenv": "^4.0.0",
+        "express": "^4.16.2",
         "express-jwt": "^3.4.0",
-        "jwks-rsa": "^1.2.0"
+        "express-session": "^1.15.6",
+        "jwks-rsa": "^1.2.0",
+        "morgan": "^1.9.0",
+        "passport": "^0.4.0",
+        "passport-azure-ad": "^3.0.8"
     }
 }
