@@ -7,24 +7,6 @@ const router = express.Router();
 
 module.exports = router;
 
-
-// const authCheck = jwt({
-//     secret: jwks.expressJwtSecret({
-//           cache: true,
-//           rateLimit: true,
-//           jwksRequestsPerMinute: 5,
-//           // YOUR-AUTH0-DOMAIN name e.g https://prosper.auth0.com
-//         //   jwksUri: "{YOUR-AUTH0-DOMAIN}/.well-known/jwks.json"
-//       }),
-//       // This is the identifier we set when we created the API
-//     //   audience: '{YOUR-API-AUDIENCE-ATTRIBUTE}',
-//     //   issuer: '{YOUR-AUTH0-DOMAIN}',
-//       algorithms: ['RS256']
-//   });
-  
-  
-
-
 router.get('/food', (req, res, next) => {
     let foodJokes = [
     {

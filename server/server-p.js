@@ -56,7 +56,6 @@ passport.use(new BearerStrategy(options, (req, token, done)=>{
         groups: token.groups,
         surname: token.family_name,
         givenName: token.given_name,
-
     }
     return done(null, user, token);
 }));
