@@ -1,53 +1,46 @@
 import React, { Component } from 'react'
 import { UserAgentApplication } from 'msal';
 
-
- // b2c ef36569d-2097-41ec-a3ef-9b066e8d5c29 -
- // aad 45abfc7e-4e11-44ea-8d9a-e0dab00c0e3d -
- // 001b9e56-2530-4682-9adf-8bbcb077eb67 -- old fortis?
-
- //new app.dev
- // fortisdev b354bafa-c381-417e-b93b-fce6e40ee013 +
- // fortis-msal-dev 22b814e7-927d-4bf8-9a8c-55304e9a5acd +
-
- //fortis-aad-only 001b9e56-2530-4682-9adf-8bbcb077eb67 (microsoft)
-var applicationConfig = {
+const applicationConfig = {
   clientID: process.env.REACT_APP_CLIENTID,
   authority: 'https://login.microsoftonline.com/csenyc.onmicrosoft.com',
   graphScopes: ['profile']
-
 }
 
 export default class Login extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      firstName: null,
-      lastName: null,
-      loginName: null,
-      isOpen: false
-    }
-
-    this.log = console.log;
+    this.user = {};
+    this.state = this.user;
     this.authCallback = this.authCallback.bind(this);
-    // this.userAgentApplication = this.userAgentApplication
     this.loginPopup = this.loginPopup.bind(this);
+    this.handleToken = this.handleToken.bind(this);
 
-    this.userAgentApplication = new UserAgentApplication(applicationConfig.clientID, applicationConfig.authority, this.authCallback, {
-      cacheLocation: 'localStorage',
-      postLogoutRedirectUri: '/logout'
-    });
+    this.log = console.log.bind(this);
+    this.warn = console.warn.bind(this);
+    this.error = console.error.bind(this);
+
+    this.userAgentApplication = new UserAgentApplication(
+      applicationConfig.clientID,
+      applicationConfig.authority,
+      this.authCallback,
+      {
+        cacheLocation: 'localStorage',
+        postLogoutRedirectUri: '/logout'
+      }
+    );
+
+    var user = this.userAgentApplication.getUser();
+
+    this.warn(`the user is: ${JSON.stringify(user)}`)
   }
-
-
-  // get userAgentApplication
-
 
 
   authCallback(errorDesc, token, error, tokenType) {
     //This function is called after loginRedirect. msal object is bound to the window object after the constructor is called.
     if (token) {
       console.log('got a token...')
+      this.handleToken(token);
     }
     else {
       console.warn(error + ":" + errorDesc);
@@ -57,23 +50,36 @@ export default class Login extends Component {
 
   loginPopup() {
     var self = this;
-    this.userAgentApplication.loginPopup(applicationConfig.graphScopes).then(function (idToken) {
-      //Login Success
-      self.userAgentApplication.acquireTokenSilent(applicationConfig.graphScopes).then(function (accessToken) {
-        //AcquireToken Success
-        console.log(JSON.stringify(accessToken));
-        self.updateUI();
-      }, function (error) {
-        //AcquireToken Failure, send an interactive request.
-        self.userAgentApplication.acquireTokenPopup(applicationConfig.graphScopes).then(function (accessToken) {
-          this.updateUI();
-        }, function (error) {
-          console.warn(error);
-        });
-      })
-    }, function (error) {
-      console.error(error);
-    });
+    this.userAgentApplication.loginPopup(applicationConfig.graphScopes)
+      .then( (idToken) =>{
+        //Login Success
+        self.log(`idToken from login ${JSON.stringify(idToken)}`);
+        self.userAgentApplication.acquireTokenSilent(applicationConfig.graphScopes)
+          .then( (accessToken) => {
+            //AcquireToken Success
+            self.log(`accessToken from aquireSilent ${JSON.stringify(accessToken)}`);
+            self.handleToken(accessToken);
+          }, (error) => {
+            //AcquireToken Failure, send an interactive request.
+            self.userAgentApplication.acquireTokenPopup(applicationConfig.graphScopes)
+              .then( (accessToken) => {
+                self.log(`accessToken from aquirePopup ${JSON.stringify(accessToken)}`);
+                self.handleToken(accessToken);
+              }, (error) => {
+                self.warn(error);
+              });
+          })
+      },  (error) => {
+        console.error(error);
+      });
+  }
+
+  handleToken(token){
+    console.log('setting state from handleToken...');
+    console.log(`token to handle: ${JSON.stringify(token)}`);
+    const user = this.userAgentApplication.getUser();
+    console.log(`user handled: ${JSON.stringify(user)}`);
+    this.setState( user );
   }
 
   logout() {
@@ -81,31 +87,16 @@ export default class Login extends Component {
     this.userAgentApplication.logout();
   }
 
-  updateUI() {
-    console.log(this.userAgentApplication.getUser().name);
-    var user = this.userAgentApplication.getUser();
-
-    console.log(JSON.stringify(user));
-    // var authButton = document.getElementById('login');
-    // authButton.innerHTML = 'logout';
-    // var label = document.getElementById('label');
-    // label.innerText = "Hello " + this.userAgentApplication.getUser().name + "! Please send an email with Microsoft Graph";
-
-    // Show the email address part
-    //var sendEmailSpan = document.getElementById('sendEmail');
-    //$("#email").click(sendEmail);
-    //sendEmailSpan.className = "visible";
-    //var emailAddress = document.getElementById('emailToSendTo');
-    //emailAddress["value"] = userAgentApplication.getUser().displayableId;
-  }
-
   render() {
     return (
-      <div>This would be a login control...
-        <input title='login' onClick={this.loginPopup} />
-
+      <div>
+        <div>This would be a login control...
+          <input type='button' title='login' onClick={this.loginPopup} />
+        </div>
+        <div>
+          <span>{this.token}</span>
+        </div>
       </div>
-
     )
   }
 }
