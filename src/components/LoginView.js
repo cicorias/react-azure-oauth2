@@ -26,7 +26,8 @@ export default class Login extends Component {
       this.authCallback,
       {
         cacheLocation: 'localStorage',
-        postLogoutRedirectUri: '/logout'
+        postLogoutRedirectUri: '/logout',
+        useV1: true
       }
     );
 
