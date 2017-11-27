@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { UserAgentApplication } from 'msal';
+import { UserAgentApplication, Logger } from 'msal';
 
 const applicationConfig = {
   clientID: process.env.REACT_APP_CLIENTID,
   authority: 'https://login.microsoftonline.com/csenyc.onmicrosoft.com',
-  graphScopes: ['profile']
+  graphScopes: [process.env.REACT_APP_CLIENTID]// ['openid'] // 'profile'
 }
 
 export default class Login extends Component {
@@ -19,6 +19,7 @@ export default class Login extends Component {
     this.log = console.log.bind(this);
     this.warn = console.warn.bind(this);
     this.error = console.error.bind(this);
+    this.consoleLogger = this.consoleLogger.bind(this);
 
     this.userAgentApplication = new UserAgentApplication(
       applicationConfig.clientID,
@@ -27,13 +28,17 @@ export default class Login extends Component {
       {
         cacheLocation: 'localStorage',
         postLogoutRedirectUri: '/logout',
-        useV1: true
+        logger: new Logger(this.consoleLogger),
+        useV1: true /// TODO externalize
       }
     );
 
     var user = this.userAgentApplication.getUser();
 
     this.warn(`the user is: ${JSON.stringify(user)}`)
+    if (!user) {
+      this.error(`user is null ensure the Client ID matches the V1 or V2 endpoint - cannot be both V1 & V2`)
+    }
   }
 
 
@@ -100,4 +105,16 @@ export default class Login extends Component {
       </div>
     )
   }
+
+  consoleLogger(level, message, containsPii){
+    console.log(message);
+  }
+
 }
+
+// class ConsoleLogger extends ILoggerCallback {
+//   constructor(level)
+//   info(level, message, containsPii) {
+//     console.log(message);
+//   }
+// }

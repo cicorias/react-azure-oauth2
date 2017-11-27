@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "msal": "git+https://github.com/cicorias/microsoft-authentication-library-for-js.git#usev1uri",
+    "msal": "file:../../msal",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-scripts": "1.0.17"

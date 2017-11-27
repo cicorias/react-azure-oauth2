@@ -10,7 +10,7 @@ module.exports = {
         validateIssuer: true,
         passReqToCallback: process.env.PASSPORT_PASSREQCALLBACK === 'true',
         allowMultiAudiencesInToken: false,
-        audience: process.env.PASSPORT_AUDIENCE,
+        audience: null, //process.env.PASSPORT_AUDIENCE,
         loggingLevel: process.env.PASSPORT_LOGLEVEL, //Logging level. 'info', 'warn' or 'error'.
         clockSkew: process.env.PASSPORT_CLOCKSKEW ? parseInt(process.env.PASSPORT_CLOCKSKEW) : 299
     }
