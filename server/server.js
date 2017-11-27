@@ -1,17 +1,64 @@
-'use strict';
+/// ENV setup
+const debug = require('debug')('oauth:server')
+const dotenv = require('dotenv');
+const dotenvParseVariables = require('dotenv-parse-variables');
+let env = dotenv.config({})
+if (env.error) throw env.error;
+env = dotenvParseVariables(env.parsed);
 
-const express = require('express');
-const app = express();
-const jwt = require('express-jwt');
-const jwks = require('jwks-rsa');
-const cors = require('cors');
-const bodyParser = require('body-parser');
+/// based upon ENV
+const port = require('./config').serverPort
+const sessionSecret = require('./config').jwtSecret
+const cookieSettings = require('./config').cookieSettings
+const passportOptions = require('./config.js').passportConfig;
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
+/// express setup
+const express = require('express')
+const app = express()
+const morgan = require('morgan')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 
-app.use('/api', require('./api'));
+/// passport setup
+const passport = require('passport')
+const BearerStrategy = require('passport-azure-ad').BearerStrategy
 
-app.listen(3333);
-console.log('Listening on localhost:3333');
+const session = require('express-session')
+const errorHandlingMiddleware = require('./error')
+
+app.use(morgan('dev'))
+app.use(cookieParser())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(session({ secret: sessionSecret, cookie: cookieSettings }))
+
+passport.use(new BearerStrategy(passportOptions, (req, token, done)=>{
+    console.log(`running validate function`);
+    console.log(JSON.stringify(token))
+    var user = {
+        oid: token.oid,
+        // token: token,
+        name: token.unique_name,
+        roles: token.roles,
+        groups: token.groups,
+        surname: token.family_name,
+        givenName: token.given_name,
+    }
+    return done(null, user, token);
+}));
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+const apiRoutes = require('./api')
+/// adds a milisecond...
+app.use('/api', passport.authenticate('oauth-bearer', { session: false }), apiRoutes)
+
+/// unprotected
+app.use('/api2', apiRoutes)
+
+app.use(errorHandlingMiddleware())
+
+app.listen(port, () => {
+  console.log('The magic happens on port ' + port)
+})
