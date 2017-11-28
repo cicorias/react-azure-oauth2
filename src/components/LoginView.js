@@ -34,11 +34,7 @@ export default class Login extends Component {
     );
 
     var user = this.userAgentApplication.getUser();
-
     this.warn(`the user is: ${JSON.stringify(user)}`)
-    if (!user) {
-      this.error(`user is null ensure the Client ID matches the V1 or V2 endpoint - cannot be both V1 & V2`)
-    }
   }
 
 
@@ -107,14 +103,17 @@ export default class Login extends Component {
   }
 
   consoleLogger(level, message, containsPii){
-    console.log(message);
+    switch (level) {
+      case 0:
+        console.error(message);
+        break;
+      case 1:
+        console.warn(message);
+        break;
+      default:
+        console.log(message);
+        break;
+    }
   }
 
 }
-
-// class ConsoleLogger extends ILoggerCallback {
-//   constructor(level)
-//   info(level, message, containsPii) {
-//     console.log(message);
-//   }
-// }
