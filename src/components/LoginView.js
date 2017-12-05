@@ -15,6 +15,8 @@ export default class Login extends Component {
     this.authCallback = this.authCallback.bind(this);
     this.loginPopup = this.loginPopup.bind(this);
     this.handleToken = this.handleToken.bind(this);
+    this.loggedInView = this.loginView.bind(this);
+    this.loginView = this.loginView.bind(this);
 
     this.log = console.log.bind(this);
     this.warn = console.warn.bind(this);
@@ -26,7 +28,7 @@ export default class Login extends Component {
       applicationConfig.authority,
       this.authCallback,
       {
-        cacheLocation: 'localStorage',
+        cacheLocation: this.props && this.props.storage ?  this.props.storage : 'localStorage',
         postLogoutRedirectUri: '/logout',
         logger: new Logger(this.consoleLogger),
         useV1: true /// TODO externalize
@@ -34,7 +36,7 @@ export default class Login extends Component {
     );
 
     var user = this.userAgentApplication.getUser();
-    this.warn(`the user is: ${JSON.stringify(user)}`)
+    this.warn(`LoginView.ctor: the user is: ${JSON.stringify(user)}`)
   }
 
 
@@ -89,18 +91,59 @@ export default class Login extends Component {
     this.userAgentApplication.logout();
   }
 
-  render() {
+  isLoggedIn(){
+    console.warn('LoginView.isLoggedIn. user is NOT logged in');
+    this.loginPopup();
+    let user = this.userAgentApplication.getUser();
+    if (!user){
+      return false;
+    }
+    return true;
+  }
+
+  loginView() {
     return (
       <div>
-        <div>This would be a login control...
-          <input type='button' title='login' onClick={this.loginPopup} />
-        </div>
-        <div>
-          <span>{this.token}</span>
-        </div>
+        NOT Logged In...
       </div>
     )
   }
+
+  loggedInView() {
+    return (
+      <div>
+        Already Logged In...
+      </div>
+    )
+  }
+
+  render() {
+    if (Login.isLoggedIn()) {
+      return this.loggedInView();
+    }
+    else {
+      return this.loginView();
+    }
+  }
+
+  componentDidMount(){
+    if (!Login.isLoggedIn()) {
+      return this.loginPopup();
+    }
+  }
+
+  // render() {
+  //   return (
+  //     <div>
+  //       <div>This would be a login control...
+  //         <input type='button' title='login' onClick={this.loginPopup} />
+  //       </div>
+  //       <div>
+  //         <span>{this.token}</span>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   consoleLogger(level, message, containsPii){
     switch (level) {
