@@ -93,7 +93,7 @@ export default class Login extends Component {
 
   isLoggedIn(){
     console.warn('LoginView.isLoggedIn. user is NOT logged in');
-    this.loginPopup();
+    //this.loginPopup();
     let user = this.userAgentApplication.getUser();
     if (!user){
       return false;
@@ -126,11 +126,16 @@ export default class Login extends Component {
     }
   }
 
-  componentDidMount(){
+  componentWillMount(){
     if (!Login.isLoggedIn()) {
-      return this.loginPopup();
+      //this.loginPopup();
     }
   }
+  // componentDidMount(){  //NFG
+  //   if (!Login.isLoggedIn()) {
+  //     return this.loginPopup();
+  //   }
+  // }
 
   // render() {
   //   return (
@@ -145,7 +150,7 @@ export default class Login extends Component {
   //   )
   // }
 
-  consoleLogger(level, message, containsPii){
+  consoleLogger(level, message, containsPii){ 
     switch (level) {
       case 0:
         console.error(message);

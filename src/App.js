@@ -18,7 +18,7 @@ const NoMatch = ({ location }) => (
   </div>
 );
 
-function requireAuth(nextState, replace) {
+function requireAuth(nextState, replace, callback) {
   let login = new Login();
   console.warn(`App.requireAuth. user logged in state: ${login.isLoggedIn()}`);
   if (!login.isLoggedIn()) {
@@ -26,10 +26,10 @@ function requireAuth(nextState, replace) {
     replace({
       pathname: '/loginPage',
       state: { nextPathname: nextState.location.pathname }
-
     })
     // return <Redirect to='/loginPage' />
   }
+  callback();
 }
 
 class App extends Component {
