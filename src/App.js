@@ -41,18 +41,19 @@ class App extends Component {
           <h1 className="App-title">Welcome to React</h1>
         </header>
         <Router history={hashHistory}>
-          <Route path='/' onEnter={requireAuth} component={AppPage} />
-          <Route path='/:id_tokenaa' onEnter={requireAuth} component={AppPage} />
-          <Route path='/ok' onEnter={requireAuth} component={AppPage} />
-          <Route path='/loginPage' component={LoginPage} />
-          <Route path="#/loginBad" render={props => <Login storage={'localstorage'} />} />
-          <Route exact path='#/foobar' render={() => (
-            <Redirect
-              to='/albums'
-            />
-          )} />
-    
+          <Route path='/'>
+            <Route path='/secure' onEnter={requireAuth} component={AppPage} />
+            <Route path='/ok' component={AppPage} />
+            <Route path='/loginPage' component={LoginPage} />
+            <Route path="/loginBad" render={props => <Login storage={'localstorage'} />} />
+            <Route exact path='/foobar' render={() => (
+              <Redirect
+                to='/albums'
+              />
+            )} />
+            <Route path='/' component={AppPage} />
             <Route component={NoMatch} />
+          </Route>
 
         </Router>
       </div>

@@ -17,6 +17,7 @@ export default class Login extends Component {
     this.handleToken = this.handleToken.bind(this);
     this.loggedInView = this.loginView.bind(this);
     this.loginView = this.loginView.bind(this);
+    this.isLoggedIn = this.isLoggedIn.bind(this);
 
     this.log = console.log.bind(this);
     this.warn = console.warn.bind(this);
@@ -34,9 +35,6 @@ export default class Login extends Component {
         useV1: true /// TODO externalize
       }
     );
-
-    var user = this.userAgentApplication.getUser();
-    this.warn(`LoginView.ctor: the user is: ${JSON.stringify(user)}`)
   }
 
 
@@ -91,11 +89,31 @@ export default class Login extends Component {
     this.userAgentApplication.logout();
   }
 
-  isLoggedIn(){
+  isLoggedIn() {
+    const self = this;
     console.warn('LoginView.isLoggedIn. user is NOT logged in');
     //this.loginPopup();
-    let user = this.userAgentApplication.getUser();
-    if (!user){
+    let user;
+    self.userAgentApplication.acquireTokenSilent(applicationConfig.graphScopes)
+      .then((accessToken) => {
+        user = accessToken;
+      })
+      .catch((error) => {
+        console.error(`error isLoggedIn: ${error}`)
+      })
+
+    self.userAgentApplication.getUser();
+    console.warn(`user now is... ${user}`);
+    //if ( user === undefined) {
+      // console.warn('tru9g to acquireTokenRedirect');
+      // self.userAgentApplication.acquireTokenRedirect(
+      //   applicationConfig.graphScopes,
+      //   applicationConfig.authority);
+
+    
+    console.log(`token: ${JSON.stringify(user)}`);
+    // let user = this.userAgentApplication.getUser();
+    if ( user === undefined) {
       return false;
     }
     return true;
@@ -105,6 +123,7 @@ export default class Login extends Component {
     return (
       <div>
         NOT Logged In...
+        <input type='button' title='login' value='Login..' onClick={this.loginPopup} />
       </div>
     )
   }
@@ -118,7 +137,7 @@ export default class Login extends Component {
   }
 
   render() {
-    if (Login.isLoggedIn()) {
+    if (this.isLoggedIn()) {
       return this.loggedInView();
     }
     else {
@@ -127,7 +146,7 @@ export default class Login extends Component {
   }
 
   componentWillMount(){
-    if (!Login.isLoggedIn()) {
+    if (!this.isLoggedIn()) {
       //this.loginPopup();
     }
   }
@@ -150,7 +169,7 @@ export default class Login extends Component {
   //   )
   // }
 
-  consoleLogger(level, message, containsPii){ 
+  consoleLogger(level, message, containsPii){
     switch (level) {
       case 0:
         console.error(message);
