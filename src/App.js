@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import Login from './components/LoginView';
+// import Login from './components/LoginView';
 
 class App extends Component {
   render() {
@@ -16,11 +16,14 @@ class App extends Component {
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
         <div>
-          <Login storage={'localstorage'} />
+          <div>put Login storage= here</div>
         </div>
       </div>
     );
   }
 }
 
+// <div>
+// <Login storage={'localstorage'} />
+// </div>
 export default App;
