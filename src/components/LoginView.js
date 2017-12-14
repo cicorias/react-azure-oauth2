@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { UserAgentApplication, Logger } from 'msal';
+import { UserAgentApplication, Logger } from '@cicorias/msal';
 
 const applicationConfig = {
   clientID: process.env.REACT_APP_CLIENTID,
@@ -33,8 +33,6 @@ export default class Login extends Component {
       }
     );
 
-    var user = this.userAgentApplication.getUser();
-    this.warn(`the user is: ${JSON.stringify(user)}`)
   }
 
 
