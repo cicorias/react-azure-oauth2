@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { UserAgentApplication, Logger } from 'msal';
+import { UserAgentApplication, Logger } from '@cicorias/msal';
 
 const applicationConfig = {
   clientID: process.env.REACT_APP_CLIENTID,
@@ -93,7 +93,7 @@ export default class Login extends Component {
     return (
       <div>
         <div>This would be a login control...
-          <input type='button' title='login' onClick={this.loginPopup} />
+          <input type='button' title='login' value='login' onClick={this.loginPopup} />
         </div>
         <div>
           <span>{this.token}</span>
