@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "msal": "file:../../msal",
+    "@cicorias/msal": "^0.1.8",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "react-router": "^3.2.0",
@@ -16,6 +16,7 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
+    "concurrently": "^3.5.1",
     "gulp": "^3.9.1",
     "react-scripts": "^0.8.4"
   }
